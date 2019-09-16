@@ -15,7 +15,9 @@ import pygame, os, sys
 import random
 from pygame.locals import * #导入游戏常量
 #设置常用目录
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))#获取当前文件上级目录的绝对地址
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))#获取当前文件上级目录的绝对地址
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))#获取当前文件目录的绝对地址
+# print(BASE_DIR)
 FONT_DIR = os.path.join(BASE_DIR,'font')
 # print(FONT_DIR)
 

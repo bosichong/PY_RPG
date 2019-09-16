@@ -14,9 +14,9 @@
 ###################################
 import random
 
-from PY_RPG.PygameApp import *
-from PY_RPG.util import * #导入辅助工具函数及一些常量
-from PY_RPG.BorderCrossing import *
+from PygameApp import *
+from util import *
+from BorderCrossing import *
 
 
 class MainScene(Scene):

@@ -93,8 +93,8 @@ Tetromino类中有两个Piece的属性对象，一个用来放置准备下落的
 import pygame
 from pygame.sprite import Sprite
 
-from PY_RPG.PygameApp import *
-from PY_RPG.util import *  # 导入辅助工具函数及一些常量
+from PygameApp import *
+from util import *  # 导入辅助工具函数及一些常量
 
 ###############
 

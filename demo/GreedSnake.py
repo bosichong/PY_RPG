@@ -110,9 +110,9 @@
 
 from pygame.sprite import Sprite
 
-from PY_RPG.PygameApp import *
-from PY_RPG.util import *  # 导入辅助工具函数及一些常量
-from PY_RPG.BorderCrossing import *
+from PygameApp import *
+from util import *  # 导入辅助工具函数及一些常量
+from BorderCrossing import *
 
 ######一些游戏常量
 RESOLUTION = ((400, 400))  # 游戏场景大小

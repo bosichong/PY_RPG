@@ -51,8 +51,8 @@ add()方法就是生成一个完整的自身，然后通过draw(）方法在场�
 
 from pygame.sprite import Sprite
 
-from PY_RPG.PygameApp import *
-from PY_RPG.util import *  # 导入辅助工具函数及一些常量
+from PygameApp import *
+from util import *  # 导入辅助工具函数及一些常量
 
 RESOLUTION = ((640, 480))  # 游戏场景大小
 
