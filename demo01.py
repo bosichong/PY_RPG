@@ -15,8 +15,6 @@
 import random
 
 from PygameApp import *
-from util import *
-from BorderCrossing import *
 
 
 class MainScene(Scene):
@@ -27,7 +25,7 @@ class MainScene(Scene):
 
     def draw(self):
         self.screen.fill((0,0,0))
-        print_text(self.screen,title_h3,250,250,'请按回车键切换到下一屏。')
+        print_text(self.screen,TITLE_h3,250,250,'请按回车键切换到下一屏。')
 
     def update(self):
         pass
@@ -65,7 +63,7 @@ class TestScene(Scene):
 
         self.ms.draw()
         self.myimgs.draw(self.screen)
-        print_text(self.screen, title_h3, self.t_x, self.t_y, 'hello world请按回车继续', )
+        print_text(self.screen, TITLE_h3, self.t_x, self.t_y, 'hello world请按回车继续', )
 
     def update(self):
         self.ms.update()
@@ -104,7 +102,7 @@ class GameOverScene(Scene):
     
     def draw(self):
         self.screen.fill((255,0,255))
-        print_text(self.screen,title_h3,250,250,'game over!请按ESC退出')
+        print_text(self.screen,TITLE_h3,250,250,'game over!请按ESC退出')
 
     def handle_event(self,event):
         if event.type == KEYUP:
@@ -155,7 +153,7 @@ class MyImgSprite(pygame.sprite.Sprite):
     '''图片精灵类'''
     def __init__(self):
        pygame.sprite.Sprite.__init__(self)
-       self.image = pygame.image.load('.././images/a.png') #导入图片
+       self.image = pygame.image.load('./images/a.png') #导入图片
        self.rect = self.image.get_rect() #返回一个rect对象
        self.rect.topleft = (random.randint(40,590),random.randint(40,430))#设置他的坐标
        self.last_update = pygame.time.get_ticks()#获取当前游戏动行的时间，这是一个整数，不明白可以打印看看

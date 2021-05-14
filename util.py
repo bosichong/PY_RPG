@@ -43,8 +43,8 @@ COLOR_Orchid=(218, 112, 214)
 COLOR_Orange2 =(238, 154, 0)
 
 ## 有关场景中一些文字打印的常用设置
-title_h3 = pygame.font.Font(os.path.join(FONT_DIR,'msyh.ttf'), 28)
-title_h2 = pygame.font.Font(os.path.join(FONT_DIR,'msyh.ttf'), 20)
+TITLE_H3 = pygame.font.Font(os.path.join(FONT_DIR,'msyh.ttf'), 28)
+TITLE_H2 = pygame.font.Font(os.path.join(FONT_DIR,'msyh.ttf'), 20)
 title_plain = pygame.font.Font(os.path.join(FONT_DIR,'msyh.ttf'), 16)
 
 

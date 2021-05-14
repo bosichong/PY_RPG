@@ -107,12 +107,11 @@
 
 
 '''
+import random
 
 from pygame.sprite import Sprite
-
 from PygameApp import *
-from util import *  # 导入辅助工具函数及一些常量
-from BorderCrossing import *
+
 
 ######一些游戏常量
 RESOLUTION = ((400, 400))  # 游戏场景大小
@@ -133,8 +132,8 @@ class MainScnen(Scene):
 
     def draw(self):
         self.screen.fill((221, 221, 221))
-        print_text(self.screen, title_h2, 30, 340, 'GreedSnake', color=BLACK)
-        print_text(self.screen, title_plain, 30, 360, '准备游戏，按回车键开始,空格暂停。', color=BLACK)
+        print_text(self.screen, TITLE_h2, 30, 340, 'GreedSnake', color=BLACK)
+        print_text(self.screen, TITLE_plain, 30, 360, '准备游戏，按回车键开始,空格暂停。', color=BLACK)
 
     def update(self):
         pass
@@ -287,7 +286,7 @@ class GameOverScene(Scene):
 
     def draw(self):
         self.screen.fill((221, 221, 221))
-        print_text(self.screen, title_plain, 50, 190, '游戏结束，按R键重新开始，按ESC键退出', color=BLACK)
+        print_text(self.screen, TITLE_plain, 50, 190, '游戏结束，按R键重新开始，按ESC键退出', color=BLACK)
 
     def handle_event(self, event):
         if event.type == KEYUP:

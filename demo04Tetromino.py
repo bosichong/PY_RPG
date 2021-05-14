@@ -120,8 +120,8 @@ class MainScnen(Scene):
         self.screen.fill(COLOR_Snow)
         for p in self.ps:
             p.draw()
-        print_text(self.screen, title_h3, 30, 340, 'Tetromino俄罗斯方块', color= COLOR_Orange2)
-        print_text(self.screen, title_plain, 30, 380, '准备游戏，按回车键开始,空格暂停,方向上旋转，左右下控制移动。',
+        print_text(self.screen, TITLE_h3, 30, 340, 'Tetromino俄罗斯方块', color= COLOR_Orange2)
+        print_text(self.screen, TITLE_plain, 30, 380, '准备游戏，按回车键开始,空格暂停,方向上旋转，左右下控制移动。',
                    color=LGHTGRAY)
 
     def update(self):
@@ -270,13 +270,13 @@ class Tetromino(Scene):
         self.piece.draw()  # 绘制游戏中下落的方块
         self.next.draw()  # 绘制下一次准备使用的方块
         # 绘制当前得分
-        print_text(self.screen, title_h2, 455, 200, '当前得分：{}'.format(self.score), color=COLOR_Orchid)
+        print_text(self.screen, TITLE_H2, 455, 200, '当前得分：{}'.format(self.score), color=COLOR_Orchid)
         # 历史最高分
-        print_text(self.screen, title_h2, 455, 230, '最高得分：{}'.format(self.hscore), color=RED)
+        print_text(self.screen, TITLE_H2, 455, 230, '最高得分：{}'.format(self.hscore), color=RED)
         # 历史最高分
-        print_text(self.screen, title_h2, 30, 50, '游戏难度：{}'.format(int(abs(self.fps/100-5))), color=RED)
+        print_text(self.screen, TITLE_H2, 30, 50, '游戏难度：{}'.format(int(abs(self.fps/100-5))), color=RED)
         # 下一个方块
-        print_text(self.screen, title_h2, 455, 50, '下一个方块：', color=COLOR_LightSkyBlue)
+        print_text(self.screen, TITLE_H2, 455, 50, '下一个方块：', color=COLOR_LightSkyBlue)
 
         # 画四周的墙和方块
         for i in range(BOARDWIDTH):
@@ -351,7 +351,7 @@ class GameOverScene(Scene):
 
     def draw(self):
         self.screen.fill(COLOR_Snow)
-        print_text(self.screen, title_h3, 75, 200, '游戏结束，按R键重新开始，按ESC键退出', color=COLOR_Orange2)
+        print_text(self.screen, TITLE_H3, 75, 200, '游戏结束，按R键重新开始，按ESC键退出', color=COLOR_Orange2)
 
     def handle_event(self, event):
         if event.type == KEYUP:
