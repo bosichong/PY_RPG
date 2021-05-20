@@ -96,22 +96,42 @@ COLOR_OliveDrab1 =(192, 255, 62)
 COLOR_Orchid=(218, 112, 214)
 COLOR_Orange2 =(238, 154, 0)
 
-## 有关场景中一些文字打印的常用设置
-TITLE_h3 = pygame.font.Font(os.path.join(FONT_DIR,'msyh.ttf'), 28)
-TITLE_h2 = pygame.font.Font(os.path.join(FONT_DIR,'msyh.ttf'), 20)
-TITLE_plain = pygame.font.Font(os.path.join(FONT_DIR,'msyh.ttf'), 16)
 
 
-def getFont(size):
-    '''获取一个可控制文字大小的字体对象'''
-    return pygame.font.Font(os.path.join(FONT_DIR, 'msyh.ttf'), size)
+
+def createPygameFont(fontDir,size):
+    '''
+    获取一个可控制文字大小的字体对象
+    :param fontDir: 字体存放地址
+    :param size : int
+    '''
+    return pygame.font.Font(fontDir, size)
 
 # 使用示例
 # print_text(self.screen, title_h2, 30, 340, 'Tetromino俄罗斯方块', color=BLACK)
-def print_text(screen,font, x, y, text, color=(255,255,255)):
-    '''一个游戏中绘制游戏中文字的函数方法'''
-    imgText = font.render(text, True, color,)
+def print_text(screen,font, x, y, meg, color=(255,255,255)):
+    '''
+    一个游戏中绘制游戏中文字的函数方法
+    :param screen 游戏中的场景绘制对象
+    :param font 场景中的文字对象
+    :param x int 坐标
+    :param y int
+    :param meg 文字内容
+    :param color 颜色值 (255,255,255)
+    '''
+    imgText = font.render(meg, True, color,)
     screen.blit(imgText,(x,y))
+
+
+
+## 有关场景中一些文字打印的常用设置
+TITLE_h3 = createPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'),28)
+TITLE_h2 = createPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'),20)
+TITLE_plain = createPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'),16)
+
+
+################################################################
+
 
 class GameApp:
     '''
@@ -202,10 +222,9 @@ class Scene:
 
 
 class BorderCrossing:
-    '''一个边界碰撞检测类'''
     def __init__(self,xstart,ystart,width,height):
         '''
-
+        一个边界碰撞检测类
         :param xstart: 场景X起点
         :param ystart: 场景Y起点
         :param width:  场景宽
@@ -221,14 +240,14 @@ class BorderCrossing:
     def isLeftBorderCrossing(self):
         '''是否碰撞左边'''
         if self.sprite.x <= self.xstart:
-            print('碰撞左边碰撞左边')
+            # print('碰撞左边碰撞左边')
             return True
         else:
             return False 
     def isTopBorderCrossing(self):
         '''是否碰撞上边'''
         if self.sprite.y <= self.ystart:
-            print('碰撞上边碰撞上边')
+            # print('碰撞上边碰撞上边')
             return True
         else:
             return False
@@ -236,14 +255,14 @@ class BorderCrossing:
         '''是否碰撞右边'''
         if self.sprite.x + self.sprite.width >= self.xstart + self.width:
             # print('{0}||||||||{1}'.format(self.sprite.x + self.sprite.width,self.xstart + self.width))
-            print('碰撞右边碰撞右边')
+            # print('碰撞右边碰撞右边')
             return True
         else:
             return False 
     def isBottomBorderCrossing(self):
         '''是否碰撞下边'''
         if self.sprite.y + self.sprite.height >= self.ystart + self.height:
-            print('碰撞下边碰撞下边')
+            # print('碰撞下边碰撞下边')
             return True
         else:
             return False
@@ -254,6 +273,7 @@ class BorderCrossing:
             return True
         else:
             return False
+
 
 
 
