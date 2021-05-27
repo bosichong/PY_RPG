@@ -13,10 +13,14 @@
 # “编学编玩”用Pygame编写游戏（6）PY_RPG 一个pygame的简单封装。
 ###################################
 import random
+import math
 
 from PygameApp import *
 
-
+radius =200
+ax = 300
+ay = 250
+position = ax-radius,ay-radius,radius*2,radius*2
 class MainScene(Scene):
     def __init__(self, screen):
         super().__init__(screen)
@@ -26,6 +30,9 @@ class MainScene(Scene):
     def draw(self):
         self.screen.fill((0,0,0))
         print_text(self.screen,TITLE_h3,250,250,'请按回车键切换到下一屏。')
+
+        pygame.draw.arc(self.screen, RED, position, math.radians(0), math.radians(45), 4)
+        
 
     def update(self):
         pass

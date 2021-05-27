@@ -61,6 +61,8 @@ pygame写起游戏都是函数式编写，对于一些简单的小游戏或许�
 
 
 '''
+
+
 '''
 游戏工具助手类
 
@@ -153,7 +155,7 @@ class GameApp:
         self.screen = pygame.display.set_mode(self.resolution)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption(self.title)
-        pygame.key.set_repeat(10)#设置键盘连续响应
+        pygame.key.set_repeat(100)#设置键盘连续响应
         
 
     def run(self):
@@ -185,7 +187,6 @@ class Scene:
         :param screen:游戏中唯一的渲染器
         '''
         self.screen = screen
-        self.update_rate = 24
         self.scenes = []#所有游戏的片段list
         self.id = ''
         self.start = False #每个场景都有一个开关标识，用来控制当前场景是否要开始渲染
