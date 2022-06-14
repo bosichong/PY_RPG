@@ -1,14 +1,6 @@
-#codeing=utf-8
-# @Time    : 2017-12-29
-# @Author  : J.sky
-# @Mail    : bosichong@qq.com
-# @Site    : www.17python.com
-# @Title   : “编学编玩”用Pygame编写游戏（7）Pingball弹球小游戏
-# @Url     : http://www.17python.com/blog/71
-# @Details : “编学编玩”用Pygame编写游戏（7）Pingball弹球小游戏
-# @Other   : OS X 10.11.6
-#            Python 3.6.1
-#            PyCharm
+# codeing=utf-8
+
+
 ###################################
 # “编学编玩”用Pygame编写游戏（7）Pingball弹球小游戏
 ###################################
@@ -62,31 +54,37 @@
 '''
 
 
-
 import random
+import os
 from PygameApp import *
 
 
-######一些游戏常量
+# 一些游戏常量
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 获取当前文件目录的绝对地址
+FONT_DIR = os.path.join(BASE_DIR, 'font')  # 字体存放目录
+font = getPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'))  # 字体地址
+fontover = getPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'), size=14)  # 字体地址
 
-RESOLUTION = ((300,400))#游戏场景大小
+RESOLUTION = ((300, 400))  # 游戏场景大小
+
 
 class MainScene(Scene):
     '''游戏开始画面，按回车后游戏开始'''
-    def __init__(self, screen):
-        super().__init__(screen)
+
+    def __init__(self, display):
+        super().__init__(display)
         self.id = 'main_scene'
         self.start = True
 
     def draw(self):
-        self.screen.fill((0,0,0))
-        print_text(self.screen,TITLE_h2,30,340,'Pinball')
-        print_text(self.screen, TITLE_plain, 30, 360, '准备游戏，按回车键开始')
+        self.display.fill((0, 0, 0))
+        print_text(30, 340, 'Pinball', font)
+        print_text(30, 360, '准备游戏，按回车键开始', font)
 
     def update(self):
         pass
 
-    def handle_event(self,event):
+    def handle_event(self, event):
         if event.type == KEYUP:
             if event.key == K_ESCAPE:
                 pygame.quit()
@@ -98,55 +96,55 @@ class MainScene(Scene):
                     else:
                         scene.start = False
 
+
 class Pingball(Scene):
     '''游戏主场景，左右移动方块，遇一小球反弹'''
-    def __init__(self,screen):
-        super().__init__(screen)
-        self.id = 'pingball'#片段id
-        self.racket = Racket(self.screen)#定义球拍
-        self.ball = Ball(self.screen)
+
+    def __init__(self, display):
+        super().__init__(display)
+        self.id = 'pingball'  # 片段id
+        self.racket = Racket(self.display)  # 定义球拍
+        self.ball = Ball(self.display)
         # 创建一个边界碰撞检对象
         self.bc = BorderCrossing(5, 5, RESOLUTION[0] - 10, RESOLUTION[1] - 10)
 
     def replay(self):
         '''游戏重新开始'''
-        self.ball.rect.x = random.randint(100,200)
-        self.ball.rect.y = random.randint(100,200)
-
+        self.ball.rect.x = random.randint(100, 200)
+        self.ball.rect.y = random.randint(100, 200)
 
     def draw(self):
-        self.screen.fill((0, 0, 0))
+        self.display.fill((0, 0, 0))
         self.racket.draw()
         self.ball.draw()
 
     def update(self):
-        self.racket.update()#更新球拍
-        self.ball.update()#更新球
-        self.bc.sprite = self.ball.rect#传递需要检测的对象
+        self.racket.update()  # 更新球拍
+        self.ball.update()  # 更新球
+        self.bc.sprite = self.ball.rect  # 传递需要检测的对象
         ######################
-        #检测球碰到边界时反弹
+        # 检测球碰到边界时反弹
         if self.bc.isTopBorderCrossing() or self.bc.isBottomBorderCrossing():
             self.ball.speed_y = -self.ball.speed_y
         if self.bc.isLeftBorderCrossing() or self.bc.isRightBorderCrossing():
             self.ball.speed_x = -self.ball.speed_x
         ######################
         # 检测球与球拍的碰撞
-        if (pygame.sprite.collide_rect(self.ball,self.racket)) :
-            #小球反弹
+        if (pygame.sprite.collide_rect(self.ball, self.racket)):
+            # 小球反弹
             self.ball.speed_y = -self.ball.speed_y
-            #控制每弹一次，速度增加2
+            # 控制每弹一次，速度增加2
             if self.ball.speed_y > 0:
                 self.ball.speed_y += 2
-            elif self.ball.speed_y <0:
+            elif self.ball.speed_y < 0:
                 self.ball.speed_y -= 2
         # 检测球超出球拍，游戏结束判断。
-        if self.ball.rect.y + self.ball.rect.height > self.racket.rect.y+10 :
+        if self.ball.rect.y + self.ball.rect.height > self.racket.rect.y+10:
             for scene in self.scenes:
                 if scene.id == 'gameover':
                     scene.start = True
                 else:
                     scene.start = False
-
 
     def handle_event(self, event):
 
@@ -156,14 +154,15 @@ class Pingball(Scene):
             elif event.key == K_RIGHT:
                 self.racket.rect.right += 5
 
+
 class GameOverScene(Scene):
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, display):
+        super().__init__(display)
         self.id = 'gameover'
 
     def draw(self):
-        self.screen.fill(BLACK)
-        print_text(self.screen, TITLE_plain, 2, 190, '游戏结束，按R键重新开始，按ESC键退出')
+        self.display.fill(BLACK)
+        print_text(10, 190, '游戏结束，按R键重新开始，按ESC键退出', fontover)
 
     def handle_event(self, event):
         if event.type == KEYUP:
@@ -179,12 +178,14 @@ class GameOverScene(Scene):
                     else:
                         scene.start = False
 
+
 class Racket(pygame.sprite.Sprite):
     '''定义球拍'''
+
     def __init__(self, display):
         pygame.sprite.Sprite.__init__(self)
         self.display = display  # 渲染器
-        self.rect = pygame.Rect((200, 340, 60, 20))#创建Rect对象
+        self.rect = pygame.Rect((200, 340, 60, 20))  # 创建Rect对象
         self.speed = 3
         self.last_update = pygame.time.get_ticks()  # 游戏开始时的计时
 
@@ -192,16 +193,18 @@ class Racket(pygame.sprite.Sprite):
         pygame.draw.rect(self.display, LGHTGRAY, self.rect, )
 
     def update(self):
-        if self.rect.left <= 2 :
+        if self.rect.left <= 2:
             self.rect.left = 2
-        if self.rect.left >= RESOLUTION[0]-self.rect.width -2:
+        if self.rect.left >= RESOLUTION[0]-self.rect.width - 2:
             self.rect.left = RESOLUTION[0]-self.rect.width - 2
 
+
 class Ball(pygame.sprite.Sprite):
-    def __init__(self,display):
+    def __init__(self, display):
         pygame.sprite.Sprite.__init__(self)
         self.display = display  # 渲染器
-        self.rect = pygame.Rect((random.randint(100,200),random.randint(100,200),20,20))#创建球体
+        self.rect = pygame.Rect(
+            (random.randint(100, 200), random.randint(100, 200), 20, 20))  # 创建球体
         # 移动速度
         self.speed_x = random.randint(3, 5)
         self.speed_y = random.randint(3, 5)
@@ -213,7 +216,7 @@ class Ball(pygame.sprite.Sprite):
     def update(self):
         '''更新自己的坐标，如果放在精灵组中，调用组的update()函数，会自动调用本函数'''
         now = pygame.time.get_ticks()
-        if now - self.last_update >1:#通过这个时间差来做一些动画
+        if now - self.last_update > 1:  # 通过这个时间差来做一些动画
             self.rect.x += self.speed_x
             self.rect.y += self.speed_y
             self.last_update = now
@@ -221,13 +224,13 @@ class Ball(pygame.sprite.Sprite):
 
 def main():
 
-    app = GameApp(title='Pingball Game', resolution=RESOLUTION)#创建游戏
-    appscreen = app.screen#获取渲染器
-    app.scenes.append(MainScene(appscreen))#创建游戏菜单
-    app.scenes.append(Pingball(appscreen))#创建游戏内容
-    app.scenes.append(GameOverScene(appscreen))#游戏结束画面
-    app.run() #游戏开始
+    app = GameApp(title='Pingball Game', resolution=RESOLUTION)  # 创建游戏
+    appdisplay = app.display  # 获取渲染器
+    app.scenes.append(MainScene(appdisplay))  # 创建游戏菜单
+    app.scenes.append(Pingball(appdisplay))  # 创建游戏内容
+    app.scenes.append(GameOverScene(appdisplay))  # 游戏结束画面
+    app.run()  # 游戏开始
+
 
 if __name__ == '__main__':
     main()
-

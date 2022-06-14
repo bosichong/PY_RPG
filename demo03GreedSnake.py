@@ -1,14 +1,6 @@
 # codeing=utf-8
-# @Time    : 2018-01-05
-# @Author  : J.sky
-# @Mail    : bosichong@qq.com
-# @Site    : www.17python.com
-# @Title   : “编学编玩”用Pygame编写游戏（8）GreedSnake贪食蛇小游戏
-# @Url     : http://www.17python.com/blog/71
-# @Details : “编学编玩”用Pygame编写游戏（8）GreedSnake贪食蛇小游戏
-# @Other   : OS X 10.11.6
-#            Python 3.6.1
-#            PyCharm
+
+
 ###################################
 # “编学编玩”用Pygame编写游戏（8）GreedSnake贪食蛇小游戏
 ###################################
@@ -40,10 +32,10 @@
 对于`GreedSnake`来说，我们需要有一组是浅色网格组成的背景，
 对于游戏背景，我单独创建了一个class `GameBackground`,背景绘制的核心逻辑代码如下：
 
-    self.screen.fill((221, 221, 221))
+    self.display.fill((221, 221, 221))
     for i in range(0, 10):
         for j in range(0,10):
-             pygame.draw.rect(self.screen, (238,238,238), (i*40, j*40, 40, 40), 1)
+             pygame.draw.rect(self.display, (238,238,238), (i*40, j*40, 40, 40), 1)
 
 在场景中创建对象后，进行渲染，效果如下：
 
@@ -57,7 +49,7 @@
 
     self.bodys = []#创建一个精灵组，用来放置蛇的身体
     for i in range(0,4):
-        self.bodys.append(SnakeBody(self.screen,3*40,(3+i)*40))
+        self.bodys.append(SnakeBody(self.display,3*40,(3+i)*40))
 
 ![]()
 
@@ -69,7 +61,7 @@
                 color = RED
             else:
                 color = BLACK
-            self.bodys.append(SnakeBody(self.screen, 2 * 40, (6 - i) * 40, color))
+            self.bodys.append(SnakeBody(self.display, 2 * 40, (6 - i) * 40, color))
 
 
 ![]()
@@ -107,7 +99,7 @@
 
 
 '''
-import random
+import random,os
 
 from pygame.sprite import Sprite
 from PygameApp import *
@@ -123,17 +115,21 @@ RIGHT = 'right'
 SW = 38
 SH = 38
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))#获取当前文件目录的绝对地址
+FONT_DIR = os.path.join(BASE_DIR, 'font')  #字体存放目录
+font = getPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'))#字体地址
+
 
 class MainScnen(Scene):
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, display):
+        super().__init__(display)
         self.id = 'mainscnen'
         self.start = True
 
     def draw(self):
-        self.screen.fill((221, 221, 221))
-        print_text(self.screen, TITLE_h2, 30, 340, 'GreedSnake', color=BLACK)
-        print_text(self.screen, TITLE_plain, 30, 360, '准备游戏，按回车键开始,空格暂停。', color=BLACK)
+        self.display.fill((221, 221, 221))
+        print_text(30, 340, 'GreedSnake',font,color=BLACK)
+        print_text(30, 360, '准备游戏，按回车键开始,空格暂停。', font,color=BLACK)
 
     def update(self):
         pass
@@ -152,10 +148,10 @@ class MainScnen(Scene):
 
 
 class GreedSnake(Scene):
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, display):
+        super().__init__(display)
         self.id = 'GreedSnake'  # 场景ID
-        self.gamebackground = GameBackground(self.screen)  # 游戏场景背景
+        self.gamebackground = GameBackground(self.display)  # 游戏场景背景
         self.bodys = []  # 创建一个精灵组，用来放置蛇的身体
         self.direction = DOWN  # 移动方向
         self.replay()  # 游戏开始
@@ -173,8 +169,8 @@ class GreedSnake(Scene):
                 color = RED
             else:
                 color = BLACK
-            self.bodys.append(SnakeBody(self.screen, 2 * 40, (6 - i) * 40, color))
-        self.food = Food(self.screen, self.bodys)
+            self.bodys.append(SnakeBody(self.display, 2 * 40, (6 - i) * 40, color))
+        self.food = Food(self.display, self.bodys)
 
     def draw(self):
         self.gamebackground.draw()  # 渲染场景中的背景
@@ -191,9 +187,9 @@ class GreedSnake(Scene):
                 # 蛇的运动，根据方向判断进行坐标修改，对于身体的坐标修改
                 if self.direction == 'down':
                     if self.bodys[0].rect.y + 40 == self.food.rect.y and self.bodys[0].rect.x == self.food.rect.x:
-                        self.bodys.insert(0, SnakeBody(self.screen, self.food.rect.x, self.food.rect.y, RED))
+                        self.bodys.insert(0, SnakeBody(self.display, self.food.rect.x, self.food.rect.y, RED))
                         self.bodys[1].color = BLACK
-                        self.food = Food(self.screen, self.bodys)
+                        self.food = Food(self.display, self.bodys)
 
                     for i in reversed(range(len(self.bodys))):
                         self.bodys[i].rect.x = self.bodys[i - 1].rect.x
@@ -205,9 +201,9 @@ class GreedSnake(Scene):
 
                 if self.direction == 'up':
                     if self.bodys[0].rect.y - 40 == self.food.rect.y and self.bodys[0].rect.x == self.food.rect.x:
-                        self.bodys.insert(0, SnakeBody(self.screen, self.food.rect.x, self.food.rect.y, RED))
+                        self.bodys.insert(0, SnakeBody(self.display, self.food.rect.x, self.food.rect.y, RED))
                         self.bodys[1].color = BLACK
-                        self.food = Food(self.screen, self.bodys)
+                        self.food = Food(self.display, self.bodys)
 
                     for i in reversed(range(len(self.bodys))):
                         self.bodys[i].rect.x = self.bodys[i - 1].rect.x
@@ -219,9 +215,9 @@ class GreedSnake(Scene):
 
                 if self.direction == 'left':
                     if self.bodys[0].rect.x - 40 == self.food.rect.x and self.bodys[0].rect.y == self.food.rect.y:
-                        self.bodys.insert(0, SnakeBody(self.screen, self.food.rect.x, self.food.rect.y, RED))
+                        self.bodys.insert(0, SnakeBody(self.display, self.food.rect.x, self.food.rect.y, RED))
                         self.bodys[1].color = BLACK
-                        self.food = Food(self.screen, self.bodys)
+                        self.food = Food(self.display, self.bodys)
 
                     for i in reversed(range(len(self.bodys))):
                         self.bodys[i].rect.x = self.bodys[i - 1].rect.x
@@ -233,9 +229,9 @@ class GreedSnake(Scene):
 
                 if self.direction == 'right':
                     if self.bodys[0].rect.x + 40 == self.food.rect.x and self.bodys[0].rect.y == self.food.rect.y:
-                        self.bodys.insert(0, SnakeBody(self.screen, self.food.rect.x, self.food.rect.y, RED))
+                        self.bodys.insert(0, SnakeBody(self.display, self.food.rect.x, self.food.rect.y, RED))
                         self.bodys[1].color = BLACK
-                        self.food = Food(self.screen, self.bodys)
+                        self.food = Food(self.display, self.bodys)
 
                     for i in reversed(range(len(self.bodys))):
                         self.bodys[i].rect.x = self.bodys[i - 1].rect.x
@@ -264,10 +260,7 @@ class GreedSnake(Scene):
         #控制游戏暂停
         if event.type == KEYUP:
             if event.key == K_SPACE:
-                if self.pause:
-                    self.pause = False
-                elif not self.pause:
-                    self.pause = True
+                self.pause = not self.pause
         if event.type == KEYDOWN:
             if event.key == K_DOWN:
                 self.direction = DOWN
@@ -280,13 +273,13 @@ class GreedSnake(Scene):
 
 
 class GameOverScene(Scene):
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, display):
+        super().__init__(display)
         self.id = 'gameover'
 
     def draw(self):
-        self.screen.fill((221, 221, 221))
-        print_text(self.screen, TITLE_plain, 50, 190, '游戏结束，按R键重新开始，按ESC键退出', color=BLACK)
+        self.display.fill((221, 221, 221))
+        print_text(50, 190, '游戏结束，按R键重新开始，按ESC键退出', font,color=BLACK)
 
     def handle_event(self, event):
         if event.type == KEYUP:
@@ -306,16 +299,16 @@ class GameOverScene(Scene):
 class GameBackground(Sprite):
     '''游戏背景渲染'''
 
-    def __init__(self, screen):
+    def __init__(self, display):
         Sprite.__init__(self)
-        self.screen = screen
+        self.display = display
 
     def draw(self):
         '''游戏背景渲染'''
-        self.screen.fill((221, 221, 221))
+        self.display.fill((221, 221, 221))
         for i in range(0, 10):
             for j in range(0, 10):
-                pygame.draw.rect(self.screen, (238, 238, 238), (i * 40, j * 40, 40, 40), 1)
+                pygame.draw.rect(self.display, (238, 238, 238), (i * 40, j * 40, 40, 40), 1)
 
 
 class SnakeBody(Sprite):
@@ -323,7 +316,7 @@ class SnakeBody(Sprite):
     定义蛇的身体上的一节
     '''
 
-    def __init__(self, screen, x, y, color):
+    def __init__(self, display, x, y, color):
         '''
 
         :param display: 渲染器
@@ -335,24 +328,24 @@ class SnakeBody(Sprite):
         self.x = x
         self.y = y
         self.color = color
-        self.screen = screen  # 渲染器
+        self.display = display  # 渲染器
         self.rect = pygame.Rect((self.x, self.y, SW, SH))  # 创建Rect对象
 
     def draw(self):
-        pygame.draw.rect(self.screen, self.color, self.rect)
+        pygame.draw.rect(self.display, self.color, self.rect)
 
 
 class Food(Sprite):
     '''食物'''
 
-    def __init__(self, screen, list):
+    def __init__(self, display, list):
         '''
 
-        :param screen: 渲染器
+        :param display: 渲染器
         :param list: 蛇身体节点list
         '''
         Sprite.__init__(self)
-        self.screen = screen  # 渲染器
+        self.display = display  # 渲染器
         while True:
             self.x = random.randint(0, 9) * 40
             self.y = random.randint(0, 9) * 40
@@ -369,15 +362,15 @@ class Food(Sprite):
         self.rect = pygame.Rect(self.x, self.y, SW, SH)
 
     def draw(self):
-        pygame.draw.rect(self.screen, GREEN, self.rect)
+        pygame.draw.rect(self.display, GREEN, self.rect)
 
 
 def main():
     app = GameApp(title='GreedSnake 贪食蛇', resolution=RESOLUTION)  # 创建游戏
-    appscreen = app.screen  # 获取渲染器
-    app.scenes.append(MainScnen(appscreen))  # 创建游戏菜单
-    app.scenes.append(GreedSnake(appscreen))  # 创建游戏内容
-    app.scenes.append(GameOverScene(appscreen))  # 游戏结束画面
+    appdisplay = app.display  # 获取渲染器
+    app.scenes.append(MainScnen(appdisplay))  # 创建游戏菜单
+    app.scenes.append(GreedSnake(appdisplay))  # 创建游戏内容
+    app.scenes.append(GameOverScene(appdisplay))  # 游戏结束画面
     app.run()  # 游戏开始
 
 

@@ -1,14 +1,5 @@
 # codeing=utf-8
-# @Time    : 2018-01-13
-# @Author  : J.sky
-# @Mail    : bosichong@qq.com
-# @Site    : www.17python.com
-# @Title   : # “编学编玩”用Pygame编写游戏（9）Tetromino俄罗斯方块游戏
-# @Url     : http://www.17python.com/blog/71
-# @Details : # “编学编玩”用Pygame编写游戏（9）Tetromino俄罗斯方块游戏
-# @Other   : OS X 10.11.6
-#            Python 3.6.1
-#            PyCharm
+
 ###################################
 # “编学编玩”用Pygame编写游戏（9）Tetromino俄罗斯方块游戏
 ###################################
@@ -82,14 +73,9 @@ Tetromino类中有两个Piece的属性对象，一个用来放置准备下落的
 
 '''
 
-
-
-
-import pygame
 from pygame.sprite import Sprite
 
 from PygameApp import *
-from util import *  # 导入辅助工具函数及一些常量
 
 ###############
 
@@ -98,29 +84,33 @@ BOARDWIDTH = 12  # 游戏板 width 个数
 BOARDHEIGHT = 22  # 游戏板 height 个数
 RESOLUTION = ((BOXSIZE * 32, BOXSIZE * 24))  # 游戏场景大小
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 获取当前文件目录的绝对地址
+FONT_DIR = os.path.join(BASE_DIR, 'font')  # 字体存放目录
+font = getPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'))  # 字体地址
+
 
 class MainScnen(Scene):
     '''
     游戏开始画面场景
     '''
-    def __init__(self, screen):
-        super().__init__(screen)
+
+    def __init__(self, display):
+        super().__init__(display)
         self.id = 'mainscnen'
         self.start = True
         self.ps = list()
-        for i in range(random.randint(10,30)):
-            self.ps.append(Piece(self.screen))
+        for i in range(random.randint(10, 30)):
+            self.ps.append(Piece(self.display))
         for p in self.ps:
-            p.x = random.randint(-5,15)
-            p.y = random.randint(1,15)
+            p.x = random.randint(-5, 15)
+            p.y = random.randint(1, 15)
 
     def draw(self):
-        self.screen.fill(COLOR_Snow)
+        self.display.fill(COLOR_Snow)
         for p in self.ps:
             p.draw()
-        print_text(self.screen, TITLE_h3, 30, 340, 'Tetromino俄罗斯方块', color= COLOR_Orange2)
-        print_text(self.screen, TITLE_plain, 30, 380, '准备游戏，按回车键开始,空格暂停,方向上旋转，左右下控制移动。',
-                   color=LGHTGRAY)
+        print_text(30, 340, 'Tetromino俄罗斯方块', font, color=COLOR_Orange2)
+        print_text(30, 380, '准备游戏，按回车键开始,空格暂停,方向上旋转，左右下控制移动。', font, color=LGHTGRAY)
 
     def update(self):
         pass
@@ -141,46 +131,45 @@ class MainScnen(Scene):
 class Tetromino(Scene):
     '''Tetromino俄罗斯方块游戏游戏主场景'''
 
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, display):
+        super().__init__(display)
         # self.start = True
         self.id = 'Tetromino'
         self.last_update = pygame.time.get_ticks()
-        self.next = Piece(self.screen)  # 创建下一块需要下落的方块，显示在场景的右边
+        self.next = Piece(self.display)  # 创建下一块需要下落的方块，显示在场景的右边
         self.offset_x = 11  # 展示下一块下落方块X坐标的偏移量
         self.offset_y = 2  # 展示下一块下落方块Y坐标的偏移量
         self.next.x += self.offset_x
         self.next.y += self.offset_y
         self.piece = None
         if self.piece == None:
-            self.piece = Piece(self.screen)
+            self.piece = Piece(self.display)
         self.board = [[0 for col in range(BOARDHEIGHT)] for row in range(BOARDWIDTH)]  # 场景中的board
         self.score = 0  # 初始化分数
-        self.hscore =0
+        self.hscore = 0
         self.replay()  # 初始化游戏场景中的board
-        self.fps = 500 #刷新频率，通过游戏得分来控制这个速度
-        self.tempscore =0
+        self.fps = 500  # 刷新频率，通过游戏得分来控制这个速度
+        self.tempscore = 0
 
     def replay(self):
         '''初始化或重新开始游戏'''
         for i in range(BOARDWIDTH):
             for j in range(BOARDHEIGHT):
-                self.board[i][j] = [0,'']
+                self.board[i][j] = [0, '']
 
         for i in range(BOARDWIDTH):
-            self.board[i][0] = [2,'']
-            self.board[i][BOARDHEIGHT - 1] = [2,'']
+            self.board[i][0] = [2, '']
+            self.board[i][BOARDHEIGHT - 1] = [2, '']
 
         for j in range(BOARDHEIGHT):
-            self.board[0][j] = [2,'']
-            self.board[BOARDWIDTH - 1][j] = [2,'']
-        #记录历史最高分
+            self.board[0][j] = [2, '']
+            self.board[BOARDWIDTH - 1][j] = [2, '']
+        # 记录历史最高分
         if self.score > self.hscore:
             self.hscore = self.score
         self.score = 0
         self.fps = 500
         self.tempscore = self.score
-
 
     def blow(self, x, y):
         '''判断方块位置是否合法，在所有的方法中此方法最为重要，应该是些游戏的核心逻辑'''
@@ -198,7 +187,7 @@ class Tetromino(Scene):
         self.next.x -= self.offset_x
         self.next.y -= self.offset_y
         self.piece = self.next
-        self.next = Piece(self.screen)
+        self.next = Piece(self.display)
         self.next.x += self.offset_x
         self.next.y += self.offset_y
 
@@ -238,8 +227,6 @@ class Tetromino(Scene):
                         self.piece.shapes[self.piece.type][self.piece.direction][i][j]
                     self.board[self.piece.x + i][self.piece.y + j][1] = self.piece.color
 
-
-
     def delline(self):
         '''消行'''
         c = 0
@@ -258,33 +245,33 @@ class Tetromino(Scene):
     def changelevel(self):
         '''修改游戏速度'''
 
-        if self.score - self.tempscore >=50:
+        if self.score - self.tempscore >= 50:
             self.fps -= 100
             self.tempscore = self.score
 
     def draw(self):
-        self.screen.fill(COLOR_Snow)#背景色
+        self.display.fill(COLOR_Snow)  # 背景色
 
         self.piece.draw()  # 绘制游戏中下落的方块
         self.next.draw()  # 绘制下一次准备使用的方块
         # 绘制当前得分
-        print_text(self.screen, TITLE_H2, 455, 200, '当前得分：{}'.format(self.score), color=COLOR_Orchid)
+        print_text(455, 200, '当前得分：{}'.format(self.score), font, color=COLOR_Orchid)
         # 历史最高分
-        print_text(self.screen, TITLE_H2, 455, 230, '最高得分：{}'.format(self.hscore), color=RED)
+        print_text(455, 230, '最高得分：{}'.format(self.hscore), font, color=RED)
         # 历史最高分
-        print_text(self.screen, TITLE_H2, 30, 50, '游戏难度：{}'.format(int(abs(self.fps/100-5))), color=RED)
+        print_text(30, 50, '游戏难度：{}'.format(int(abs(self.fps / 100 - 5))), font, color=RED)
         # 下一个方块
-        print_text(self.screen, TITLE_H2, 455, 50, '下一个方块：', color=COLOR_LightSkyBlue)
+        print_text(455, 50, '下一个方块：', font, color=COLOR_LightSkyBlue)
 
         # 画四周的墙和方块
         for i in range(BOARDWIDTH):
             for j in range(BOARDHEIGHT):
                 if self.board[i][j][0] == 2:  # 画墙
-                    pygame.draw.rect(self.screen, COLOR_PeachPuff,
+                    pygame.draw.rect(self.display, COLOR_PeachPuff,
                                      (int(((RESOLUTION[0] - BOARDWIDTH * BOXSIZE) / 2) + i * BOXSIZE),
                                       int((RESOLUTION[1] - BOARDHEIGHT * BOXSIZE) / 2) + j * BOXSIZE, BOXSIZE, BOXSIZE))
                 if self.board[i][j][0] == 1:  # 画已经在板中固定的方块
-                    pygame.draw.rect(self.screen, self.board[i][j][1],
+                    pygame.draw.rect(self.display, self.board[i][j][1],
                                      (int(((RESOLUTION[0] - BOARDWIDTH * BOXSIZE) / 2) + i * BOXSIZE),
                                       int((RESOLUTION[1] - BOARDHEIGHT * BOXSIZE) / 2) + j * BOXSIZE, BOXSIZE, BOXSIZE))
 
@@ -307,11 +294,11 @@ class Tetromino(Scene):
                 self.board_color1 = random.choice((COLOR_Salmon, COLOR_LightSkyBlue, COLOR_Khaki1, COLOR_OliveDrab1,
                                                    COLOR_Orchid, COLOR_Orange2))
 
-
     def handle_event(self, event):
         # 控制游戏暂停
         if event.type == KEYUP:
             if event.key == K_SPACE:
+                print(self.pause)
                 if self.pause:
                     self.pause = False
                 elif not self.pause:
@@ -343,13 +330,13 @@ class Tetromino(Scene):
 
 
 class GameOverScene(Scene):
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, display):
+        super().__init__(display)
         self.id = 'gameover'
 
     def draw(self):
-        self.screen.fill(COLOR_Snow)
-        print_text(self.screen, TITLE_H3, 75, 200, '游戏结束，按R键重新开始，按ESC键退出', color=COLOR_Orange2)
+        self.display.fill(COLOR_Snow)
+        print_text(75, 200, '游戏结束，按R键重新开始，按ESC键退出', font, color=COLOR_Orange2)
 
     def handle_event(self, event):
         if event.type == KEYUP:
@@ -369,9 +356,9 @@ class GameOverScene(Scene):
 class Piece(Sprite):
     '''游戏板上下落的砖块'''
 
-    def __init__(self, screen):
+    def __init__(self, display):
         super().__init__()
-        self.screen = screen
+        self.display = display
         # 各类下落方块形状。0为空白，1为占用
         # shapes 用来存放各种图形
         self.shapes = {
@@ -536,14 +523,14 @@ class Piece(Sprite):
         self.type = random.choice(('O', 'L', 'I', 'S', 'Z', 'J', 'T'))  # 初始化形状
         self.direction = random.randint(0, len(self.shapes[self.type]) - 1)  # 初始化下落块的方向
         self.color = random.choice((COLOR_Salmon, COLOR_LightSkyBlue, COLOR_Khaki1,
-                                    COLOR_OliveDrab1,COLOR_Orchid,COLOR_Orange2))  # 初始化颜色
+                                    COLOR_OliveDrab1, COLOR_Orchid, COLOR_Orange2))  # 初始化颜色
         self.last_update = pygame.time.get_ticks()
 
     def draw(self):
         for i in range(self.template_w):
             for j in range(self.template_h):
                 if self.shapes[self.type][self.direction][i][j] == 1:
-                    pygame.draw.rect(self.screen, self.color,
+                    pygame.draw.rect(self.display, self.color,
                                      (int((RESOLUTION[0] - (BOARDWIDTH) * BOXSIZE) / 2) + (self.x + i) * BOXSIZE,
                                       int((RESOLUTION[1] - (BOARDHEIGHT) * BOXSIZE) / 2) + (self.y + j) * BOXSIZE,
                                       BOXSIZE,
@@ -551,11 +538,11 @@ class Piece(Sprite):
 
 
 def main():
-    app = GameApp(title='Tetromino俄罗斯方块', resolution=RESOLUTION)  # 创建游戏
-    appscreen = app.screen  # 获取渲染器
-    app.scenes.append(MainScnen(appscreen))
-    app.scenes.append(Tetromino(appscreen))
-    app.scenes.append((GameOverScene(appscreen)))
+    app = GameApp(title='Tetromino俄罗斯方块', resolution=RESOLUTION, repeat=100)  # 创建游戏
+    appdisplay = app.display  # 获取渲染器
+    app.scenes.append(MainScnen(appdisplay))
+    app.scenes.append(Tetromino(appdisplay))
+    app.scenes.append((GameOverScene(appdisplay)))
     app.run()
 
 

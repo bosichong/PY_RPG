@@ -52,23 +52,24 @@ add()方法就是生成一个完整的自身，然后通过draw(）方法在场�
 from pygame.sprite import Sprite
 
 from PygameApp import *
-from util import *  # 导入辅助工具函数及一些常量
 
 RESOLUTION = ((640, 480))  # 游戏场景大小
-
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))#获取当前文件目录的绝对地址
+FONT_DIR = os.path.join(BASE_DIR, 'font')  #字体存放目录
+font = getPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'))#字体地址
 
 class MatrixScene(Scene):
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, display):
+        super().__init__(display)
         self.id = "Matrix"
         self.start = True
         self.slist = list()
         for i in range(100):
-            self.slist.append(Matrix(self.screen))
+            self.slist.append(Matrix(self.display))
             # print(self.slist[i].x)
 
     def draw(self):
-        self.screen.fill(BLACK)  # 背景色
+        self.display.fill(BLACK)  # 背景色
         for s in self.slist:
             s.draw()
 
@@ -87,9 +88,9 @@ class MatrixScene(Scene):
 
 
 class Matrix(Sprite):
-    def __init__(self, screen):
+    def __init__(self, display):
         super().__init__()
-        self.screen = screen
+        self.display = display
         self.strlist = list() # 一组矩阵下落字符串
         self.last_update = pygame.time.get_ticks()  # 获取一个游戏中开始时间点
         #定义一些下落矩阵字符数组中的数值
@@ -112,8 +113,8 @@ class Matrix(Sprite):
         self.y = -(random.randint(self.down_y, self.down_y * 2))
         self.x = random.randint(0, RESOLUTION[0])
         self.speed = random.randint(self.downspeed, self.downspeed*3)
-        self.fontsize = random.randint(10,20)
-        self.tt = getFont(self.fontsize)
+        self.fontsize = random.randint(10,16)
+        self.ft = getPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'),size=self.fontsize)
         #每组下落字符的数设置
         for i in range(self.cs,self.cs*2):
             c = random.randint(33, 127)
@@ -128,7 +129,7 @@ class Matrix(Sprite):
         #     print(s[0][0],end='')
     def draw(self):
         for i in range(len(self.strlist)):
-            print_text(self.screen, self.tt, self.x, self.strlist[i][1], self.strlist[i][0], color=Color(0,self.strlist[i][2],0))
+            print_text(self.x, self.strlist[i][1], self.strlist[i][0],self.ft, color=Color(0,self.strlist[i][2],0))
 
     def update(self):
         now = pygame.time.get_ticks()
@@ -145,8 +146,8 @@ class Matrix(Sprite):
 
 def main():
     app = GameApp(title='Matrix', resolution=RESOLUTION)  # 创建游戏
-    appscreen = app.screen  # 获取渲染器
-    app.scenes.append(MatrixScene(appscreen))
+    appdisplay = app.display  # 获取渲染器
+    app.scenes.append(MatrixScene(appdisplay))
     app.run()
 
 

@@ -1,37 +1,31 @@
 #codeing=utf-8
-# @Time    : 2017-12-28
-# @Author  : J.sky
-# @Mail    : bosichong@qq.com
-# @Site    : www.17python.com
-# @Title   : “编学编玩”用Pygame编写游戏（6）PY_RPG 一个pygame的简单封装。
-# @Url     : http://www.17python.com/blog/70
-# @Details : “编学编玩”用Pygame编写游戏（6）PY_RPG 一个pygame的简单封装。
-# @Other   : OS X 10.11.6 
-#            Python 3.6.1
-#            PyCharm
-###################################
-# “编学编玩”用Pygame编写游戏（6）PY_RPG 一个pygame的简单封装。
-###################################
+
 import random
 import math
+import os
 
 from PygameApp import *
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))#获取当前文件目录的绝对地址
+FONT_DIR = os.path.join(BASE_DIR, 'font')  #字体存放目录
+font = getPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'))#字体地址
 
 radius =200
 ax = 300
 ay = 250
 position = ax-radius,ay-radius,radius*2,radius*2
+
 class MainScene(Scene):
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, display):
+        super().__init__(display)
         self.id = 'main_scene'
         self.start = True
 
     def draw(self):
-        self.screen.fill((0,0,0))
-        print_text(self.screen,TITLE_h3,250,250,'请按回车键切换到下一屏。')
+        self.display.fill((0,0,0))
+        print_text(250,250,'请按回车键切换到下一屏。',font)
 
-        pygame.draw.arc(self.screen, RED, position, math.radians(0), math.radians(45), 4)
+        pygame.draw.arc(self.display, RED, position, math.radians(0), math.radians(45), 4)
         
 
     def update(self):
@@ -50,14 +44,14 @@ class MainScene(Scene):
                         scene.start = False
 
 class TestScene(Scene):
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, display):
+        super().__init__(display)
         self.id = 'test'
         self.resolution = (640,480)
         self.t_x = 300
         self.t_y = 300
         self.last_update = pygame.time.get_ticks()  # 游戏开始时的计时
-        self.ms = Myrs(self.screen,self.resolution)
+        self.ms = Myrs(self.display,self.resolution)
         self.myimgs = pygame.sprite.Group()
         # 创建一个边界碰撞检对象
         self.bc = BorderCrossing(5, 5, self.resolution[0] - 10, self.resolution[1] - 10)
@@ -65,12 +59,12 @@ class TestScene(Scene):
             self.myimgs.add(MyImgSprite())
     
     def draw(self):
-        self.screen.fill((255,0,0))
-        pygame.draw.rect(self.screen, (255,255,255), (100,100,100,100),)
+        self.display.fill((255,0,0))
+        pygame.draw.rect(self.display, (255,255,255), (100,100,100,100),)
 
         self.ms.draw()
-        self.myimgs.draw(self.screen)
-        print_text(self.screen, TITLE_h3, self.t_x, self.t_y, 'hello world请按回车继续', )
+        self.myimgs.draw(self.display)
+        print_text(self.t_x, self.t_y, 'hello world请按回车继续',font)
 
     def update(self):
         self.ms.update()
@@ -103,13 +97,13 @@ class TestScene(Scene):
                         scene.start = False
 
 class GameOverScene(Scene):
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, display):
+        super().__init__(display)
         self.id = 'gameover'
     
     def draw(self):
-        self.screen.fill((255,0,255))
-        print_text(self.screen,TITLE_h3,250,250,'game over!请按ESC退出')
+        self.display.fill((255,0,255))
+        print_text(250,250,'game over!请按ESC退出',font)
 
     def handle_event(self,event):
         if event.type == KEYUP:
@@ -177,12 +171,14 @@ class MyImgSprite(pygame.sprite.Sprite):
             self.rect.y += self.speed_y
             self.last_update = now
 
+
+
 def main():
     app = GameApp()#创建游戏
-    appscreen = app.screen#获取渲染器
-    app.scenes.append(MainScene(appscreen))#创建游戏菜单
-    app.scenes.append(TestScene(appscreen))#创建游戏内容
-    app.scenes.append(GameOverScene(appscreen))#游戏结束画面
+    display = app.display#获取渲染器
+    app.scenes.append(MainScene(display))#创建游戏菜单
+    app.scenes.append(TestScene(display))#创建游戏内容
+    app.scenes.append(GameOverScene(display))#游戏结束画面
     app.run() #游戏开始
 if __name__ == '__main__':
     main()

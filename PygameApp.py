@@ -1,19 +1,7 @@
 #codeing=utf-8
-# @Time    : 2017-12-28
-# @Author  : J.sky
-# @Mail    : bosichong@qq.com
-# @Site    : www.17python.com
-# @Title   : “编学编玩”用Pygame编写游戏（6）PY_RPG 一个pygame的简单封装。
-# @Url     : http://www.17python.com/blog/49
-# @Details : “编学编玩”用Pygame编写游戏（6）PY_RPG 一个pygame的简单封装。
-# @Other   : OS X 10.11.6 
-#            Python 3.6.1
-#            PyCharm
-###################################
-# “编学编玩”用Pygame编写游戏（6）PY_RPG 一个pygame的简单封装。
-###################################
 
 '''
+
 ## 为什么要封装？
 
 pygame写起游戏都是函数式编写，对于一些简单的小游戏或许可以应付，随着游戏内容的增加，我们不可能只在一个.py文件中写下所有的游戏代码，
@@ -67,15 +55,10 @@ pygame写起游戏都是函数式编写，对于一些简单的小游戏或许�
 游戏工具助手类
 
 '''
-import os
-import pygame, os, sys
+
+import pygame, sys,os,random
 from pygame.locals import * #导入游戏常量
-#设置常用目录
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))#获取当前文件上级目录的绝对地址
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))#获取当前文件目录的绝对地址
-# print(BASE_DIR)
-FONT_DIR = os.path.join(BASE_DIR,'font')
-# print(FONT_DIR)
+
 
 pygame.init()
 
@@ -101,35 +84,26 @@ COLOR_Orange2 =(238, 154, 0)
 
 
 
-def createPygameFont(fontDir,size):
-    '''
-    获取一个可控制文字大小的字体对象
-    :param fontDir: 字体存放地址
-    :param size : int
+def getPygameFont(fontDir,size=18):
+    '''获取一个可控制文字字体及大小的字体对象
+    fontDir: 字体存放地址,这里
+    size : int
     '''
     return pygame.font.Font(fontDir, size)
 
-# 使用示例
-# print_text(self.screen, title_h2, 30, 340, 'Tetromino俄罗斯方块', color=BLACK)
-def print_text(screen,font, x, y, meg, color=(255,255,255)):
+
+def print_text(x, y,text, font, color=(255,255,255)):
+    '''游戏中打印文字方法的封装
+    x,y : 文字的坐标
+    text: 文字内容
+    font: 一个pygame的字体对象，这里使用getPygameFont方法来创建
+    color 文字颜色
     '''
-    一个游戏中绘制游戏中文字的函数方法
-    :param screen 游戏中的场景绘制对象
-    :param font 场景中的文字对象
-    :param x int 坐标
-    :param y int
-    :param meg 文字内容
-    :param color 颜色值 (255,255,255)
-    '''
-    imgText = font.render(meg, True, color,)
-    screen.blit(imgText,(x,y))
+    imgText = font.render(text, True, color)
+    screen = pygame.display.get_surface()
+    screen.blit(imgText, (x,y))
 
 
-
-## 有关场景中一些文字打印的常用设置
-TITLE_h3 = createPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'),28)
-TITLE_h2 = createPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'),20)
-TITLE_plain = createPygameFont(os.path.join(FONT_DIR, 'msyh.ttf'),16)
 
 
 ################################################################
@@ -139,23 +113,24 @@ class GameApp:
     '''
     渲染器（APP）--只负责渲染游戏场景中存在的游戏片段，属性有：一个游戏片段容器及一些游戏窗口常用设置，并初始化游戏设置。
     '''
-    def __init__(self,title='游戏窗口',resolution=(640,480),update_rate=24):
+    def __init__(self,title='游戏窗口',resolution=(640,480),update_rate=24,repeat=24):
         '''
-        :param title: 游戏标题
-        :param resolution: 场景尺寸(640，480)
-        :param update_rate: 刷频率默认24
+        title: 游戏标题
+        resolution: 场景尺寸(640，480)
+        update_rate: 刷频率默认24
+        repeat: 设置键盘连续响应
         '''
         pygame.init()
-        pygame.key.set_repeat(10)  # 重复响应一个按键
         self.title = title#游戏标题
+        pygame.display.set_caption(self.title)
         self.resolution = resolution#分辨率
         self.update_rate = update_rate#刷新频率
         self.scenes = []#所有游戏的片段list
-        # self.mySprites  = [] #这里可以定义很多贯穿于多个片段中的游戏角色，比如：主角。
-        self.screen = pygame.display.set_mode(self.resolution)
-        self.clock = pygame.time.Clock()
-        pygame.display.set_caption(self.title)
-        pygame.key.set_repeat(100)#设置键盘连续响应
+        self.mySprites  = [] #这里可以定义很多贯穿于多个片段中的游戏角色，比如：主角。
+        self.display = pygame.display.set_mode(self.resolution)
+        self.clock = pygame.time.Clock()#一个pygame定时器
+        self.repeat = repeat
+        pygame.key.set_repeat(self.repeat)#设置键盘连续响应
         
 
     def run(self):
@@ -169,7 +144,7 @@ class GameApp:
                 #如果当前片段可以开始，则开始渲染
                 if scene.start:
                     #传递相关参数，用来在scene中使用。
-                    scene.screen = self.screen #渲染器
+                    scene.display = self.display #渲染器
                     scene.update_rate = self.update_rate #刷新频率
                     scene.clock = self.clock #刷新频率设置对象
                     scene.scenes = self.scenes#获得当前所有游戏片段
@@ -181,16 +156,18 @@ class Scene:
     '''
     游戏片段(scene)--可能是游戏中的一个片段，一个情节，一节过场，片头，片尾等，游戏片段中包含一个开关属性，用来控制是否可以渲染此游戏片段。
     '''
-    def __init__(self, screen):
+    def __init__(self, display):
         '''
-
-        :param screen:游戏中唯一的渲染器
+        :param display:游戏中唯一的渲染器
         '''
-        self.screen = screen
+        self.display = display
         self.scenes = []#所有游戏的片段list
         self.id = ''
         self.start = False #每个场景都有一个开关标识，用来控制当前场景是否要开始渲染
         self.pause = False  # 游戏暂停控制
+        self.update_rate = 24 #刷新频率 默认24
+        self.clock = pygame.time.Clock()#一个pygame定时器
+        self.resolution = (640,480) # 分辨率，用来获得场景的宽高 默认 self.resolution = (640,480)
 
 
 
@@ -223,9 +200,9 @@ class Scene:
 
 
 class BorderCrossing:
+    '''一个边界碰撞检测类'''
     def __init__(self,xstart,ystart,width,height):
         '''
-        一个边界碰撞检测类
         :param xstart: 场景X起点
         :param ystart: 场景Y起点
         :param width:  场景宽
